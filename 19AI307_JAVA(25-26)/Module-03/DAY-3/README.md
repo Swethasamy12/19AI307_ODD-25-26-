@@ -1,182 +1,132 @@
-# Ex.No:3(A) INHERITANCE AND AGGREGATION
+# Ex.No:3(C) ABSTRACTION
 
 ## QUESTION:
-A jewelry store tracks gold rates for different types of customers. The base class is Customer with attributes like customerId, name, and purchaseWeight (in grams). There are two types of customers: RegularCustomer and PremiumCustomer. RegularCustomer gets a fixed discount of 2% on the gold rate per gram. PremiumCustomer gets a 5% discount plus a special cashback. The base gold rate per gram is input at runtime. For each customer, calculate the final price they pay:
+In a secret intelligence facility, encrypted messages are stored as arrays of characters. Each type of agent has a different way to decode these messages. Define an abstract class Decoder with a method decodeMessage(String[] fragments).
+There are two types of agents:
 
-       
-       
-      finalPrice = purchaseWeight * (goldRatePerGram - discount)
+   AlphaAgent: Extracts a meaningful string by rearranging the fragments based on even indices first, then odd indices, and then reversing the final result.
 
+   BetaAgent: Picks all fragments that start and end with the same letter, joins them with -, and removes all vowels from the resulting string.
 
-For PremiumCustomer, additionally show cashback amount (which is 1% of the final price).
 
 ## AIM:
-To build an inheritance-based Java program that calculates the final price of gold for different types of customers (Regular and Premium), applying respective discounts and showing cashback for premium customers.
+To create an abstract class Decoder with an abstract method decodeMessage(), and implement two subclasses, AlphaAgent and BetaAgent, each with a unique decoding technique for encrypted message fragments.
 
 ## ALGORITHM :
-1. Create a base class Customer with attributes: customerId, name, purchaseWeight, and goldRatePerGram.
+1. Create an abstract class Decoder containing an abstract method decodeMessage(String[] fragments).
 
-2. Create method getDiscountRate() in base class returning 0 (default).
+2. Create subclass AlphaAgent implementing decodeMessage() by collecting fragments at even indices,then collecting fragments at odd indices,reversing the combined list.
 
-3. Create method calculateFinalPrice() that:
+3. Joining all fragments into one decoded string.
 
-        calculates discount per gram → discountAmount = goldRatePerGram * (discountRate/100)
+4. Create subclass BetaAgent implementing decodeMessage() by selecting fragments whose first and last characters match (case-insensitive).
 
-        calculates effective rate → effectiveRate = goldRatePerGram - discountAmount
+5. Joining selected fragments using -.
 
-  returns → finalPrice = purchaseWeight * effectiveRate
+6. Removing all vowels from the final combined string.
 
-4. Override display() in base class to show general customer details.
+7. Read number of fragments and store them in a string array.
 
-5. Create child class RegularCustomer:
+8. Read agent type (1 = AlphaAgent, 2 = BetaAgent).
 
-       Override getDiscountRate() to return 2%.
+9. Create the corresponding agent object.
 
-       Override display() to show customer type as Regular.
+10. Call decodeMessage() and print the decoded output.
 
-6. Create child class PremiumCustomer:
 
-       Override getDiscountRate() to return 5%.
 
-7.  Add calculateCashback() → returns 1% of final price.
-
-8.  Override display() to show final price + cashback.
-
-9.  Call display() to show the complete bill with discounts.
 
 
 ## PROGRAM:
  ```
 /*
-Program to implement a Inheritance and Aggregation using Java
+Program to implement a Abstraction using Java
 Developed by: swetha c
 RegisterNumber: 212224230283
 */
 ```
-
 ## SOURCE CODE:
+
 ```
-import java.util.Scanner;
-import java.text.DecimalFormat;
-class Customer {
-    String customerId, name;
-    double purchaseWeight, goldRatePerGram;
+import java.util.*;
 
-    Customer(String customerId, String name, double purchaseWeight, double goldRatePerGram) {
-        this.customerId = customerId;
-        this.name = name;
-        this.purchaseWeight = purchaseWeight;
-        this.goldRatePerGram = goldRatePerGram;
-    }
+abstract class Decoder {
+    abstract String decodeMessage(String[] fragments);
+}
 
-    double getDiscountRate() {
-        return 0;
-    }
 
-    double calculateFinalPrice() {
-        double discountAmount = goldRatePerGram * getDiscountRate() / 100;
-        double effectiveRate = goldRatePerGram - discountAmount;
-        return purchaseWeight * effectiveRate;
-    }
-
-    void display() {
-        DecimalFormat df = new DecimalFormat("0.00");
-        System.out.println("Customer ID: " + customerId);
-        System.out.println("Name: " + name);
-        System.out.println("Customer Type: General");
-        System.out.println("Purchase Weight: " + purchaseWeight + " grams");
-        System.out.println("Gold Rate per Gram: " + goldRatePerGram);
-        System.out.println("Discount: " + getDiscountRate() + "%");
-        System.out.println("Final Price: " + df.format(calculateFinalPrice()));
+class AlphaAgent extends Decoder {
+    @Override
+    String decodeMessage(String[] fragments) {
+        List<String> ordered = new ArrayList<>();
         
-    }
-}
+        for (int i = 0; i < fragments.length; i += 2) {
+            ordered.add(fragments[i]);
 
-class RegularCustomer extends Customer {
-
-    RegularCustomer(String customerId, String name, double purchaseWeight, double goldRatePerGram) {
-        super(customerId, name, purchaseWeight, goldRatePerGram);
-    }
-
-    @Override
-    double getDiscountRate() {
-        return 2.0;
-    }
-
-    @Override
-    void display() {
-        DecimalFormat df = new DecimalFormat("0.00");
-        System.out.println("Customer ID: " + customerId);
-        System.out.println("Name: " + name);
-        System.out.println("Customer Type: Regular");
-        System.out.println("Purchase Weight: " + purchaseWeight + " grams");
-        System.out.println("Gold Rate per Gram: " + goldRatePerGram);
-        System.out.println("Discount: 2%");
-        System.out.println("Final Price: " + df.format(calculateFinalPrice()));
+        }
        
-
+        for (int i = 1; i < fragments.length; i += 2) {
+            ordered.add(fragments[i]);
+        }
        
-    }
-}
-
-class PremiumCustomer extends Customer {
-
-    PremiumCustomer(String customerId, String name, double purchaseWeight, double goldRatePerGram) {
-        super(customerId, name, purchaseWeight, goldRatePerGram);
-    }
-
-    @Override
-    double getDiscountRate() {
-        return 5.0;
-    }
-
-    double calculateCashback() {
-        return calculateFinalPrice() * 0.01;
-    }
-
-    @Override
-    void display() {
-        DecimalFormat df = new DecimalFormat("0.00");
-        System.out.println("Customer ID: " + customerId);
-        System.out.println("Name: " + name);
-        System.out.println("Customer Type: Premium");
-        System.out.println("Purchase Weight: " + purchaseWeight + " grams");
-        System.out.println("Gold Rate per Gram: " + goldRatePerGram);
-        System.out.println("Discount: 5%");
-        System.out.println("Final Price: " + df.format(calculateFinalPrice()));
-        System.out.println("Cashback: " + df.format(calculateCashback()));
+        Collections.reverse(ordered);
         
+        StringBuilder result = new StringBuilder();
+        for (String s : ordered) {
+            result.append(s);
+        }
+        return result.toString();
     }
 }
 
-public class GoldRateSystem {
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
 
-        // Input 1
-        String type1 = sc.next();
-        Customer cust1;
-        if (type1.equalsIgnoreCase("Regular")) {
-            cust1 = new RegularCustomer(sc.next(), sc.next(), sc.nextDouble(), sc.nextDouble());
-        } else {
-            cust1 = new PremiumCustomer(sc.next(), sc.next(), sc.nextDouble(), sc.nextDouble());
+class BetaAgent extends Decoder {
+    @Override
+    String decodeMessage(String[] fragments) {
+        List<String> selected = new ArrayList<>();
+        for (String f : fragments) {
+            if (!f.isEmpty()) {
+                char first = Character.toLowerCase(f.charAt(0));
+                char last = Character.toLowerCase(f.charAt(f.length() - 1));
+                if (first == last) {
+                    selected.add(f);
+                }
+            }
         }
 
-        
-        cust1.display();
-     
+        String joined = String.join("-", selected);
+        return joined.replaceAll("[AEIOUaeiou]", "");
+    }
+}
 
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = Integer.parseInt(sc.nextLine().trim());
+        String[] fragments = new String[n];
+        for (int i = 0; i < n; i++) {
+            fragments[i] = sc.nextLine().trim();
+        }
+        int type = Integer.parseInt(sc.nextLine().trim());
+
+        Decoder agent;
+        if (type == 1)
+            agent = new AlphaAgent();
+        else
+            agent = new BetaAgent();
+
+        System.out.println(agent.decodeMessage(fragments));
         sc.close();
     }
 }
-
 ```
 
 
 ## OUTPUT:
 
-<img width="884" height="700" alt="image" src="https://github.com/user-attachments/assets/bc4bc233-2418-404a-88cc-490c1d83bc24" />
+<img width="791" height="586" alt="image" src="https://github.com/user-attachments/assets/8e5ac67e-a125-4db4-b804-52e16025fa7e" />
+
 
 ## RESULT:
 
-Therefore the program successfully applies different discount rules for regular and premium customers.
+Therefore the program successfully decodes messages using the rules defined for AlphaAgent and BetaAgent.
